@@ -1,4 +1,4 @@
-import { CepConsulta } from './../models/endereco';
+import { CepConsulta, Endereco } from './../models/endereco';
 import { Fornecedor } from '../models/fornecedor';
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
@@ -40,8 +40,20 @@ export class FornecedorService extends BaseService {
     }
 
     atualizarFornecedor(fornecedor: Fornecedor): Observable<Fornecedor> {
-        return new Observable<Fornecedor>();
-    }
+      return this.http
+          .put(this.UrlServiceV1 + "fornecedores/" + fornecedor.id, fornecedor, super.ObterAuthHeaderJson())
+          .pipe(
+              map(super.extractData),
+              catchError(super.serviceError));
+  }
+
+  atualizarEndereco(endereco: Endereco): Observable<Endereco> {
+    return this.http
+        .put(this.UrlServiceV1 + "fornecedores/endereco/" + endereco.id, endereco, super.ObterAuthHeaderJson())
+        .pipe(
+            map(super.extractData),
+            catchError(super.serviceError));
+}
 
     excluirFornecedor(id: string): Observable<Fornecedor> {
         return new Observable<Fornecedor>();
