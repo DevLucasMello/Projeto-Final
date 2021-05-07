@@ -9,6 +9,8 @@ import { NgBrazilValidators } from 'ng-brazil';
 import { utilsBr } from 'js-brasil';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerService } from "ngx-spinner";
+
 
 import { StringUtils } from 'src/app/utils/string-utils';
 import { Fornecedor } from '../models/fornecedor';
@@ -112,7 +114,7 @@ export class EditarComponent implements OnInit {
 
     setTimeout(() => {
       this.spinner.hide();
-    }, 1000);
+    }, 3000);
   }
 
   preencherForm() {
