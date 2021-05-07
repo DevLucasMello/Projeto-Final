@@ -1,3 +1,4 @@
+import { FornececedorGuard } from './services/fornecedor.guard';
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
@@ -14,20 +15,28 @@ const fornecedorRouterConfig: Routes = [
         path: '', component: FornecedorAppComponent,
         children: [
             { path: 'listar-todos', component: ListaComponent },
-            { path: 'adicionar-novo', component: NovoComponent },
+            { path: 'adicionar-novo', component: NovoComponent,
+              canDeactivate: [FornececedorGuard],
+              canActivate: [FornececedorGuard],
+              data: [{ claim: { nome: 'Fornecedor', valor: 'Adicionar'}}]
+            },
             { path: 'editar/:id', component: EditarComponent,
+              canActivate: [FornececedorGuard],
+              data: [{ claim: { nome: 'Fornecedor', valor: 'Atualizar' } }],
               resolve: {
                 fornecedor: FornecedorResolve
               }
             },
             { path: 'detalhes/:id', component: DetalhesComponent,
-            resolve: {
+              resolve: {
                 fornecedor: FornecedorResolve
               }
             },
             { path: 'excluir/:id', component: ExcluirComponent,
-            resolve: {
-              fornecedor: FornecedorResolve
+              canActivate: [FornececedorGuard],
+              data: [{ claim: { nome: 'Fornecedor', valor: 'Excluir' } }],
+              resolve: {
+                fornecedor: FornecedorResolve
             }
           }
         ]

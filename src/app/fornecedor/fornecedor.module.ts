@@ -1,3 +1,4 @@
+import { FornececedorGuard } from './services/fornecedor.guard';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NovoComponent } from './novo/novo.component';
@@ -13,7 +14,6 @@ import { NgxSpinnerModule } from "ngx-spinner";
 import { EditarComponent } from './editar/editar.component';
 import { ExcluirComponent } from './excluir/excluir.component';
 import { DetalhesComponent } from './detalhes/detalhes.component';
-import { HttpClientModule } from '@angular/common/http';
 import { FornecedorResolve } from './services/fornecedor.resolve';
 
 @NgModule({
@@ -30,14 +30,14 @@ import { FornecedorResolve } from './services/fornecedor.resolve';
     FornecedorRoutingModule,
     FormsModule,
     ReactiveFormsModule,
-    HttpClientModule,
     TextMaskModule,
     NgBrazil,
     NgxSpinnerModule
   ],
   providers: [
     FornecedorService,
-    FornecedorResolve
+    FornecedorResolve,
+    FornececedorGuard
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
