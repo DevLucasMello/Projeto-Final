@@ -1,27 +1,24 @@
-import { ValidationMessages, GenericValidator, DisplayMessage } from './../../utils/generic-form-validator';
 import { Component, OnInit, ViewChildren, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControlName, AbstractControl } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-
-import { Observable, fromEvent, merge } from 'rxjs';
 
 import { NgBrazilValidators } from 'ng-brazil';
 import { utilsBr } from 'js-brasil';
 import { ToastrService } from 'ngx-toastr';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxSpinnerService } from "ngx-spinner";
-
+import { NgxSpinnerService } from 'ngx-spinner';
 
 import { StringUtils } from 'src/app/utils/string-utils';
 import { Fornecedor } from '../models/fornecedor';
 import { Endereco, CepConsulta } from '../models/endereco';
 import { FornecedorService } from '../services/fornecedor.service';
+import { FormBaseComponent } from 'src/app/base-components/form-base.component';
 
 @Component({
   selector: 'app-editar',
   templateUrl: './editar.component.html'
 })
-export class EditarComponent implements OnInit {
+export class EditarComponent extends FormBaseComponent implements OnInit {
 
   @ViewChildren(FormControlName, { read: ElementRef }) formInputElements: ElementRef[];
 
@@ -33,14 +30,10 @@ export class EditarComponent implements OnInit {
   fornecedor: Fornecedor = new Fornecedor();
   endereco: Endereco = new Endereco();
 
-  validationMessages: ValidationMessages;
-  genericValidator: GenericValidator;
-  displayMessage: DisplayMessage = {};
   textoDocumento: string = '';
 
   MASKS = utilsBr.MASKS;
   tipoFornecedor: number;
-  formResult: string = '';
 
   constructor(private fb: FormBuilder,
     private fornecedorService: FornecedorService,
@@ -49,6 +42,8 @@ export class EditarComponent implements OnInit {
     private route: ActivatedRoute,
     private modalService: NgbModal,
     private spinner: NgxSpinnerService) {
+
+    super();
 
     this.validationMessages = {
       nome: {
@@ -80,7 +75,7 @@ export class EditarComponent implements OnInit {
       }
     };
 
-    this.genericValidator = new GenericValidator(this.validationMessages);
+    super.configurarMensagensValidacaoBase(this.validationMessages);
 
     this.fornecedor = this.route.snapshot.data['fornecedor'];
     this.tipoFornecedor = this.fornecedor.tipoFornecedor;
@@ -114,7 +109,7 @@ export class EditarComponent implements OnInit {
 
     setTimeout(() => {
       this.spinner.hide();
-    }, 3000);
+    }, 1000);
   }
 
   preencherForm() {
@@ -149,20 +144,11 @@ export class EditarComponent implements OnInit {
   ngAfterViewInit() {
     this.tipoFornecedorForm().valueChanges.subscribe(() => {
       this.trocarValidacaoDocumento();
-      this.configurarElementosValidacao();
-      this.validarFormulario();
+      super.configurarValidacaoFormularioBase(this.formInputElements, this.fornecedorForm)
+      super.validarFormulario(this.fornecedorForm)
     });
 
-    this.configurarElementosValidacao();
-  }
-
-  configurarElementosValidacao() {
-    let controlBlurs: Observable<any>[] = this.formInputElements
-      .map((formControl: ElementRef) => fromEvent(formControl.nativeElement, 'blur'));
-
-    merge(...controlBlurs).subscribe(() => {
-      this.validarFormulario();
-    });
+    super.configurarValidacaoFormularioBase(this.formInputElements, this.fornecedorForm);
   }
 
   trocarValidacaoDocumento() {
@@ -184,10 +170,6 @@ export class EditarComponent implements OnInit {
 
   tipoFornecedorForm(): AbstractControl {
     return this.fornecedorForm.get('tipoFornecedor');
-  }
-
-  validarFormulario() {
-    this.displayMessage = this.genericValidator.processarMensagens(this.fornecedorForm);
   }
 
   buscarCep(cep: string) {
@@ -217,6 +199,9 @@ export class EditarComponent implements OnInit {
 
       this.fornecedor = Object.assign({}, this.fornecedor, this.fornecedorForm.value);
       this.fornecedor.documento = StringUtils.somenteNumeros(this.fornecedor.documento);
+
+      /* Workaround para evitar cast de string para int no back-end */
+      this.fornecedor.tipoFornecedor = parseInt(this.fornecedor.tipoFornecedor.toString());
 
       this.fornecedorService.atualizarFornecedor(this.fornecedor)
         .subscribe(

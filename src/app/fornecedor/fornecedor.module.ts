@@ -1,3 +1,4 @@
+import { ListaProdutosComponent } from './produtos/lista.produtos.component';
 import { FornececedorGuard } from './services/fornecedor.guard';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -23,7 +24,8 @@ import { FornecedorResolve } from './services/fornecedor.resolve';
     ListaComponent,
     EditarComponent,
     ExcluirComponent,
-    DetalhesComponent
+    DetalhesComponent,
+    ListaProdutosComponent
   ],
   imports: [
     CommonModule,

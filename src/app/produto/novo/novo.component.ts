@@ -1,3 +1,4 @@
+import { CurrencyUtils } from './../../utils/currency-utils';
 import { Component, OnInit, ViewChildren, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControlName } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -107,7 +108,10 @@ export class NovoComponent implements OnInit {
   adicionarProduto() {
     if (this.produtoForm.dirty && this.produtoForm.valid) {
       this.produto = Object.assign({}, this.produto, this.produtoForm.value);
-      this.formResult = JSON.stringify(this.produto);
+
+      this.produto.imagemUpload = this.croppedImage.split(',')[1];
+      this.produto.imagem = this.imagemNome;
+      this.produto.valor = CurrencyUtils.StringParaDecimal(this.produto.valor);
 
       this.produtoService.novoProduto(this.produto)
         .subscribe(
